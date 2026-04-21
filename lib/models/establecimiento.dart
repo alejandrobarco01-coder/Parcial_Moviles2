@@ -16,13 +16,18 @@ class Establecimiento {
   });
 
   factory Establecimiento.fromJson(Map<String, dynamic> json) {
+    String logoUrl = json['logo']?.toString() ?? '';
+    if (logoUrl.isNotEmpty && !logoUrl.startsWith('http')) {
+      logoUrl = 'https://parking.visiontic.com.co/logos/$logoUrl';
+    }
+
     return Establecimiento(
       id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
       nombre: json['nombre']?.toString() ?? '',
       nit: json['nit']?.toString() ?? '',
       direccion: json['direccion']?.toString() ?? '',
       telefono: json['telefono']?.toString() ?? '',
-      logo: json['logo']?.toString() ?? '',
+      logo: logoUrl,
     );
   }
 

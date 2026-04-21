@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/establecimiento.dart';
 
 class EstablecimientosService {
@@ -17,7 +18,8 @@ class EstablecimientosService {
     try {
       final response = await _dio.get('$_baseUrl/establecimientos');
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
+        // La API de VisionTIC devuelve {"success":true,"data":[...]}
+        final List<dynamic> data = response.data['data'] ?? [];
         return data.map((json) => Establecimiento.fromJson(json)).toList();
       } else {
         throw Exception('Error al obtener establecimientos: código ${response.statusCode}');
@@ -33,7 +35,7 @@ class EstablecimientosService {
     try {
       final response = await _dio.get('$_baseUrl/establecimientos/$id');
       if (response.statusCode == 200) {
-        return Establecimiento.fromJson(response.data);
+        return Establecimiento.fromJson(response.data['data']);
       } else {
         throw Exception('Error al obtener el establecimiento: código ${response.statusCode}');
       }
@@ -44,14 +46,14 @@ class EstablecimientosService {
     }
   }
 
-  Future<void> create(Map<String, dynamic> data, String? imagePath) async {
+  Future<void> create(Map<String, dynamic> data, XFile? image) async {
     try {
       final formData = FormData.fromMap(data);
 
-      if (imagePath != null && imagePath.isNotEmpty) {
+      if (image != null) {
         formData.files.add(MapEntry(
           'logo',
-          await MultipartFile.fromFile(imagePath),
+          MultipartFile.fromBytes(await image.readAsBytes(), filename: image.name),
         ));
       }
 
@@ -66,17 +68,16 @@ class EstablecimientosService {
     }
   }
 
-  Future<void> update(int id, Map<String, dynamic> data, String? imagePath) async {
+  Future<void> update(int id, Map<String, dynamic> data, XFile? image) async {
     try {
       final formDataMap = Map<String, dynamic>.from(data);
-      formDataMap['_method'] = 'PUT';
 
       final formData = FormData.fromMap(formDataMap);
 
-      if (imagePath != null && imagePath.isNotEmpty) {
+      if (image != null) {
         formData.files.add(MapEntry(
           'logo',
-          await MultipartFile.fromFile(imagePath),
+          MultipartFile.fromBytes(await image.readAsBytes(), filename: image.name),
         ));
       }
 

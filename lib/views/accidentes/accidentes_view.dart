@@ -1,4 +1,4 @@
-import 'dart:isolate';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -34,7 +34,7 @@ class _AccidentesViewState extends State<AccidentesView> {
 
     try {
       final List<Accidente> accidentes = await _accidentesService.fetchAccidentes();
-      final stats = await Isolate.run(() => calcularEstadisticas(accidentes));
+      final stats = await compute(calcularEstadisticas, accidentes);
       setState(() {
         _stats = stats;
         _isLoading = false;

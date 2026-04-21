@@ -48,7 +48,10 @@ class _DashboardViewState extends State<DashboardView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Error al cargar datos', style: TextStyle(color: Colors.red)),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('Error al cargar datos:\n${snapshot.error}', style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {

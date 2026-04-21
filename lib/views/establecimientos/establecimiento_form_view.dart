@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +24,7 @@ class _EstablecimientoFormViewState extends State<EstablecimientoFormView> {
   final TextEditingController _direccionController = TextEditingController();
   final TextEditingController _telefonoController = TextEditingController();
 
-  File? _selectedImage;
+  XFile? _selectedImage;
   String? _currentLogoUrl;
   bool _isLoading = false;
   bool _isInitDataLoading = false;
@@ -66,7 +67,7 @@ class _EstablecimientoFormViewState extends State<EstablecimientoFormView> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _selectedImage = pickedFile;
       });
     }
   }
@@ -87,14 +88,14 @@ class _EstablecimientoFormViewState extends State<EstablecimientoFormView> {
       };
 
       if (_isEditing) {
-        await _service.update(widget.id!, data, _selectedImage?.path);
+        await _service.update(widget.id!, data, _selectedImage);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Establecimiento actualizado con éxito')),
           );
         }
       } else {
-        await _service.create(data, _selectedImage?.path);
+        await _service.create(data, _selectedImage);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Establecimiento creado con éxito')),
@@ -188,7 +189,7 @@ class _EstablecimientoFormViewState extends State<EstablecimientoFormView> {
           borderRadius: BorderRadius.circular(8),
         ),
         child: _selectedImage != null
-            ? Image.file(_selectedImage!, fit: BoxFit.cover)
+            ? (kIsWeb ? Image.network(_selectedImage!.path, fit: BoxFit.cover) : Image.file(File(_selectedImage!.path), fit: BoxFit.cover))
             : (_currentLogoUrl != null && _currentLogoUrl!.isNotEmpty)
                 ? Image.network(_currentLogoUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.camera_alt, size: 50))
                 : const Column(
