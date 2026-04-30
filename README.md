@@ -84,3 +84,25 @@ Esta es una aplicación móvil desarrollada en Flutter como parte del Parcial 2.
    BASE_URL_PARQUEADERO=https://parking.visiontic.com.co/api
    ```
 4. Ejecuta el proyecto con `flutter run`.
+
+## 8. Distribución con Firebase App Distribution
+
+### Flujo resumido:
+1. **Generar APK**: Compilación en modo release (`app-release.apk`).
+2. **App Distribution**: Subida del artefacto a Firebase App Distribution mediante consola o CLI.
+3. **Testers**: Asignación del release al grupo `QA_Team`.
+4. **Instalación**: Recepción del correo de invitación e instalación en el dispositivo mediante App Tester.
+
+### Comando para reproducir el build:
+`flutter build apk --release`
+
+### Política de versionado usada:
+Se emplea Semantic Versioning (SemVer) bajo el formato `MAJOR.MINOR.PATCH+buildNumber` (Ejemplo: `1.0.1+2`).
+- **MAJOR**: Cambios incompatibles en la API o arquitectura.
+- **MINOR**: Nuevas funcionalidades retrocompatibles.
+- **PATCH**: Corrección de errores.
+- **buildNumber**: Incremento interno consecutivo para cada compilación subida.
+
+### Formato de Release Notes del equipo:
+`v[Versión] - [Fecha] - [Nombre_App]: [Descripción de cambios]`
+Ejemplo: `v1.0.1 - 30/04/2026 - EduAlert: Integración inicial de Firebase.`
