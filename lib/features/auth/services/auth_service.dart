@@ -41,7 +41,7 @@ class AuthService {
       );
 
       final data = response.data as Map<String, dynamic>;
-      final token = data['access_token'] as String?;
+      final token = data['token'] as String?;
       final userData = data['user'] as Map<String, dynamic>?;
 
       if (token == null || userData == null) {
