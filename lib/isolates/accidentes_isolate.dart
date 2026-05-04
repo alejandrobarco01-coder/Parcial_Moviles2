@@ -1,7 +1,7 @@
 import '../models/accidente.dart';
 
 Map<String, dynamic> calcularEstadisticas(List<Accidente> accidentes) {
-  print('[Isolate] Iniciado — ${accidentes.length} registros recibidos');
+// print('[Isolate] Iniciado — ${accidentes.length} registros recibidos');
   final stopwatch = Stopwatch()..start();
 
   final Map<String, int> distribucionClase = {};
@@ -38,7 +38,7 @@ Map<String, dynamic> calcularEstadisticas(List<Accidente> accidentes) {
   final top5Barrios = barriosList.take(5).toList();
 
   stopwatch.stop();
-  print('[Isolate] Completado en ${stopwatch.elapsedMilliseconds} ms');
+// print('[Isolate] Completado en ${stopwatch.elapsedMilliseconds} ms');
 
   return {
     'distribucionClase': distribucionClase,
