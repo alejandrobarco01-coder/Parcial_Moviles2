@@ -3,6 +3,7 @@
 // Configura Provider con AuthController y determina la ruta inicial
 // según si existe un token almacenado en flutter_secure_storage.
 
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,6 +18,9 @@ import 'views/accidentes/accidentes_view.dart';
 import 'views/establecimientos/establecimientos_list_view.dart';
 import 'views/establecimientos/establecimiento_detail_view.dart';
 import 'views/establecimientos/establecimiento_form_view.dart';
+import 'screens/universidades/lista_universidades_screen.dart';
+import 'screens/universidades/nueva_universidad_screen.dart';
+import 'services/universidad_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +32,21 @@ void main() async {
   }
 
   try {
-    await Firebase.initializeApp();
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyA5nbez06I1KCwmMcGK2YT6DrWxsnRj8SU",
+          appId: "1:888843508760:web:e0589a19c5c2a1e488776d",
+          messagingSenderId: "888843508760",
+          projectId: "fir-app-distribution-78797",
+          storageBucket: "fir-app-distribution-78797.firebasestorage.app",
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
+    // No bloqueamos el inicio de la app con el sembrado
+    UniversidadService().sembrarSiVacia().catchError((e) => debugPrint('Error en sembrado: $e'));
   } catch (e) {
     debugPrint('Error initializing Firebase: $e');
   }
@@ -113,6 +131,15 @@ class _AppRouterState extends State<_AppRouter> {
             final id = int.tryParse(idStr ?? '') ?? 0;
             return EstablecimientoFormView(id: id);
           },
+        ),
+        // ── Universidades (Firebase Firestore) ────────────────────────────
+        GoRoute(
+          path: '/universidades',
+          builder: (context, state) => const ListaUniversidadesScreen(),
+        ),
+        GoRoute(
+          path: '/universidades/nueva',
+          builder: (context, state) => const NuevaUniversidadScreen(),
         ),
       ],
     );

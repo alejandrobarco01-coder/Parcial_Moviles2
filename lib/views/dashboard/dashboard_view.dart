@@ -95,6 +95,15 @@ class _DashboardViewState extends State<DashboardView> {
                   color: Colors.blue,
                   onTap: () => context.push('/establecimientos'),
                 ),
+                const SizedBox(height: 16),
+                _buildCard(
+                  title: 'Gestión de Universidades',
+                  count: 0, // Firestore maneja su propio conteo o podrías implementarlo
+                  isLoading: false,
+                  icon: Icons.business,
+                  color: Colors.purple,
+                  onTap: () => context.push('/universidades'),
+                ),
               ],
             ),
           );
