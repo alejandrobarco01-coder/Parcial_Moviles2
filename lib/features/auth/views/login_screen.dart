@@ -6,6 +6,7 @@
 // - Al éxito, navega a /evidence
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../controllers/auth_controller.dart';
@@ -50,12 +51,16 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
-
-    final controller = context.read<AuthController>();
-    final success = await controller.login(
+    await _performLogin(
       _emailController.text.trim(),
       _passwordController.text,
     );
+  }
+
+  /// Inicia sesión con [email] y [password] (sin validar el formulario).
+  Future<void> _performLogin(String email, String password) async {
+    final controller = context.read<AuthController>();
+    final success = await controller.login(email, password);
 
     if (!mounted) return;
 
@@ -83,6 +88,33 @@ class _LoginScreenState extends State<LoginScreen>
         controller.clearError();
       }
     }
+  }
+
+  /// Usa `DEMO_LOGIN_EMAIL` y `DEMO_LOGIN_PASSWORD` del archivo `.env`.
+  Future<void> _loginWithEnvCredentials() async {
+    final email = dotenv.env['DEMO_LOGIN_EMAIL']?.trim() ?? '';
+    final password = dotenv.env['DEMO_LOGIN_PASSWORD'] ?? '';
+
+    if (email.isEmpty || password.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Define DEMO_LOGIN_EMAIL y DEMO_LOGIN_PASSWORD en el archivo .env (raíz del proyecto).',
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: const Color(0xFF2D3748),
+        ),
+      );
+      return;
+    }
+
+    _emailController.text = email;
+    _passwordController.text = password;
+    await _performLogin(email, password);
   }
 
   @override
@@ -265,6 +297,30 @@ class _LoginScreenState extends State<LoginScreen>
                                           letterSpacing: 0.5,
                                         ),
                                       ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextButton.icon(
+                              onPressed: controller.isLoading
+                                  ? null
+                                  : _loginWithEnvCredentials,
+                              icon: Icon(
+                                Icons.key_rounded,
+                                size: 20,
+                                color: Colors.white.withValues(alpha: 0.85),
+                              ),
+                              label: Text(
+                                'Iniciar con credenciales',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 8,
+                                ),
                               ),
                             ),
                           ],

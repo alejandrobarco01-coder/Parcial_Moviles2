@@ -3,6 +3,7 @@
 // Configura Provider con AuthController y determina la ruta inicial
 // según si existe un token almacenado en flutter_secure_storage.
 
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -31,9 +32,21 @@ void main() async {
   }
 
   try {
-    await Firebase.initializeApp();
-    // Sembrar dato de ejemplo si la colección universidades está vacía
-    await UniversidadService().sembrarSiVacia();
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyA5nbez06I1KCwmMcGK2YT6DrWxsnRj8SU",
+          appId: "1:888843508760:web:e0589a19c5c2a1e488776d",
+          messagingSenderId: "888843508760",
+          projectId: "fir-app-distribution-78797",
+          storageBucket: "fir-app-distribution-78797.firebasestorage.app",
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
+    // No bloqueamos el inicio de la app con el sembrado
+    UniversidadService().sembrarSiVacia().catchError((e) => debugPrint('Error en sembrado: $e'));
   } catch (e) {
     debugPrint('Error initializing Firebase: $e');
   }
