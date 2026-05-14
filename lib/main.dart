@@ -17,6 +17,9 @@ import 'views/accidentes/accidentes_view.dart';
 import 'views/establecimientos/establecimientos_list_view.dart';
 import 'views/establecimientos/establecimiento_detail_view.dart';
 import 'views/establecimientos/establecimiento_form_view.dart';
+import 'screens/universidades/lista_universidades_screen.dart';
+import 'screens/universidades/nueva_universidad_screen.dart';
+import 'services/universidad_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +32,8 @@ void main() async {
 
   try {
     await Firebase.initializeApp();
+    // Sembrar dato de ejemplo si la colección universidades está vacía
+    await UniversidadService().sembrarSiVacia();
   } catch (e) {
     debugPrint('Error initializing Firebase: $e');
   }
@@ -113,6 +118,15 @@ class _AppRouterState extends State<_AppRouter> {
             final id = int.tryParse(idStr ?? '') ?? 0;
             return EstablecimientoFormView(id: id);
           },
+        ),
+        // ── Universidades (Firebase Firestore) ────────────────────────────
+        GoRoute(
+          path: '/universidades',
+          builder: (context, state) => const ListaUniversidadesScreen(),
+        ),
+        GoRoute(
+          path: '/universidades/nueva',
+          builder: (context, state) => const NuevaUniversidadScreen(),
         ),
       ],
     );
